@@ -7,7 +7,7 @@ Sub CreatePivot()
 ' Cell F8, for example, is R8C6, so to select A1:F8
 ' you would put: address = "!R1C1:R8C6"
 ' Each time you run this, it deletes the sheet marked "Graph"
-' And re-creates it - replace "Sheets("Graph").Delete" as applicable
+' and re-creates it - replace "Sheets("Graph").Delete" as applicable
 
 Dim i As Integer
 Dim pivotArray As Variant

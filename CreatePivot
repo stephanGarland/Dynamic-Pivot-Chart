@@ -1,0 +1,47 @@
+
+Sub CreatePivot()
+
+' Stephan Garland
+' stephan.marc.garland@gmail.com
+' Change address to your specific table range
+' Cell F8, for example, is R8C6, so to select A1:F8
+' you would put: address = "!R1C1:R8C6"
+' Each time you run this, it deletes the sheet marked "Graph"
+' And re-creates it - replace "Sheets("Graph").Delete" as applicable
+
+Dim i As Integer
+Dim pivotArray As Variant
+Dim address As String
+
+address = "!R1C1:R4C3"
+
+On Error Resume Next
+Application.DisplayAlerts = False
+Sheets("Graph").Delete
+Application.DisplayAlerts = True
+
+For i = 1 To Sheets.Count
+    If IsEmpty(pivotArray) Then
+        pivotArray = Array(1)
+        ReDim Preserve pivotArray(1 To UBound(pivotArray) + 1) As Variant
+        pivotArray(1) = Array("Sheet" & i & address, "Item1")
+    Else
+        ReDim Preserve pivotArray(1 To UBound(pivotArray) + 1) As Variant
+        pivotArray(UBound(pivotArray)) = Array("Sheet" & i & address, "Item1")
+    End If
+Next i
+
+ActiveWorkbook.Sheets.Add(After:=Sheets(Sheets.Count)).Name = "Graph"
+ActiveWorkbook.PivotCaches.Create(SourceType:=xlConsolidation, SourceData:= _
+    pivotArray, Version:=6).CreatePivotTable TableDestination:=Sheets("Graph").Range("A1"), TableName:= _
+    "PivotTable1", DefaultVersion:=6
+ActiveSheet.PivotTableWizard TableDestination:=ActiveSheet.Cells(3, 1)
+ActiveSheet.Cells(3, 1).Select
+ActiveSheet.PivotTables("PivotTable1").DataPivotField.PivotItems("Sum of Value" _
+    ).Position = 1
+ActiveSheet.Shapes.AddChart2(201, xlColumnClustered).Select
+ActiveSheet.Name = "Graph"
+ActiveChart.SetSourceData Source:=Range("Graph" & "!$A$3:$D$8")
+
+End Sub
+
